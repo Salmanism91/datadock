@@ -129,6 +129,46 @@ mark{background:rgba(232,255,71,0.2);color:var(--accent);border-radius:2px;paddi
 .btn-backup:hover{background:rgba(232,255,71,0.12);border-color:rgba(232,255,71,0.5)}
 .btn-backup-import{color:var(--accent2);background:rgba(71,200,255,0.06);border-color:rgba(71,200,255,0.2)}
 .btn-backup-import:hover{background:rgba(71,200,255,0.12);border-color:rgba(71,200,255,0.5)}
+/* COMPARE MODAL */
+#compare-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:1001;align-items:center;justify-content:center}
+#compare-modal.open{display:flex}
+.compare-box{background:var(--surface);border:1px solid var(--border);border-radius:8px;width:92vw;max-width:900px;max-height:92vh;display:flex;flex-direction:column;overflow:hidden}
+.compare-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);flex-shrink:0}
+.compare-title{font-family:"IBM Plex Mono",monospace;font-size:0.88rem;font-weight:600;color:var(--accent)}
+.compare-controls{padding:16px 20px;border-bottom:1px solid var(--border);flex-shrink:0}
+.compare-ctrl-row{display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.compare-tabs{display:flex;gap:0;border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-bottom:12px;width:fit-content}
+.cmp-tab{background:none;border:none;padding:6px 16px;font-family:"IBM Plex Mono",monospace;font-size:0.7rem;color:var(--muted);cursor:pointer;transition:background .12s,color .12s}
+.cmp-tab.active{background:var(--accent);color:#0e0f11;font-weight:600}
+.cmp-tab-body{min-height:60px}
+.cmp-pick-hint{font-size:0.75rem;color:var(--muted);margin-bottom:8px}
+.cmp-checklist{display:flex;flex-direction:column;gap:4px;max-height:140px;overflow-y:auto}
+.cmp-check{display:flex;align-items:center;gap:8px;padding:5px 7px;border-radius:var(--radius);cursor:pointer;transition:background .1s;user-select:none}
+.cmp-check:hover{background:rgba(255,255,255,0.04)}
+.cmp-check input{accent-color:var(--accent);width:13px;height:13px;cursor:pointer;flex-shrink:0}
+.cmp-check span{font-size:0.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cmp-tag-inp{flex:1;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:7px 10px;border-radius:var(--radius);font-family:"IBM Plex Mono",monospace;font-size:0.8rem;outline:none;transition:border-color .12s}
+.cmp-tag-inp:focus{border-color:var(--accent)}
+.compare-results{flex:1;overflow-y:auto;padding:0}
+.compare-results-inner{padding:16px 20px}
+.cmp-section-label{font-family:"IBM Plex Mono",monospace;font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.cmp-table-wrap{overflow-x:auto}
+.cmp-table{width:100%;border-collapse:collapse;font-size:0.82rem}
+.cmp-table th{font-family:"IBM Plex Mono",monospace;font-size:0.65rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);text-align:left;padding:9px 14px;border-bottom:2px solid var(--border);white-space:nowrap}
+.cmp-table th.right{text-align:right}
+.cmp-table td{padding:10px 14px;border-bottom:1px solid rgba(42,43,46,0.5);font-size:0.83rem}
+.cmp-table td.right{text-align:right;font-family:"IBM Plex Mono",monospace}
+.cmp-table tr:hover td{background:rgba(255,255,255,0.025)}
+.cmp-table tr.grand-total td{border-top:2px solid var(--accent);color:var(--accent);font-weight:600;font-family:"IBM Plex Mono",monospace;font-size:0.88rem;background:rgba(232,255,71,0.05)}
+.cmp-table tr.grand-total td.right{color:var(--green);font-size:1rem}
+.cmp-pct-bar-wrap{width:120px;background:var(--border);border-radius:20px;height:6px;display:inline-block;vertical-align:middle;margin-left:8px}
+.cmp-pct-bar{height:6px;border-radius:20px;background:var(--accent2);transition:width .3s}
+.cmp-no-results{padding:24px;text-align:center;color:var(--muted);font-size:0.83rem}
+.cmp-chart-wrap{position:relative;height:280px}
+@media(max-width:768px){
+  .compare-box{width:100vw;max-width:100vw;height:100vh;max-height:100vh;border-radius:0}
+  .cmp-pct-bar-wrap{display:none}
+}
 /* CHART MODAL */
 #chart-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:1000;align-items:center;justify-content:center}
 #chart-modal.open{display:flex}
@@ -303,6 +343,7 @@ canvas#barChart{width:100%!important}
     <div class="table-toolbar">
       <div class="result-count" id="result-count">—</div>
       <div style="margin-left:auto;display:flex;gap:7px">
+        <button class="btn btn-ghost btn-sm" id="compare-btn" onclick="openCompare()" style="display:none">⚖ Compare Filters</button>
         <button class="btn btn-ghost btn-sm" id="chart-btn" onclick="openChart()" style="display:none">📊 Bar Chart</button>
         <button class="btn btn-ghost btn-sm" id="export-btn" onclick="exportData()" style="display:none">⬇ Export</button>
       </div>
@@ -312,6 +353,68 @@ canvas#barChart{width:100%!important}
       <div class="empty-state"><div class="empty-icon">⬢</div><div class="empty-text">Upload a file to get started</div></div>
     </div>
     <div class="pagination" id="pagination" style="display:none"></div>
+  </div>
+</div>
+
+<!-- COMPARE MODAL -->
+<div id="compare-modal">
+  <div class="compare-box">
+    <div class="compare-header">
+      <span class="compare-title">⚖ Compare Pre-filters</span>
+      <button class="chart-close" onclick="closeCompare()">✕</button>
+    </div>
+
+    <!-- Controls -->
+    <div class="compare-controls">
+      <div class="compare-ctrl-row">
+        <div class="chart-ctrl" style="flex:1">
+          <label>Sum Column</label>
+          <select id="cmp-sum-col">
+            <option value="">— select column —</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="compare-tabs">
+        <button class="cmp-tab active" onclick="switchCmpTab('pick',this)">✦ Pick Filters</button>
+        <button class="cmp-tab" onclick="switchCmpTab('tag',this)">⬡ Match by Tag</button>
+      </div>
+
+      <!-- TAB: PICK -->
+      <div id="cmp-tab-pick" class="cmp-tab-body">
+        <div class="cmp-pick-hint">Select pre-filters to compare:</div>
+        <div class="cmp-checklist" id="cmp-checklist"></div>
+      </div>
+
+      <!-- TAB: TAG -->
+      <div id="cmp-tab-tag" class="cmp-tab-body" style="display:none">
+        <div class="cmp-pick-hint">Type a keyword — all filters whose name contains it will be compared:</div>
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <input type="text" id="cmp-tag-input" placeholder="e.g. BZZ or Tyrolit…" class="cmp-tag-inp"/>
+        </div>
+      </div>
+
+      <button class="btn btn-accent" onclick="runCompare()" style="margin-top:10px;width:100%">▶ Run Comparison</button>
+    </div>
+
+    <!-- Results -->
+    <div class="compare-results" id="compare-results" style="display:none">
+      <div class="compare-results-inner">
+
+        <!-- Summary table -->
+        <div class="cmp-section-label">Breakdown</div>
+        <div class="cmp-table-wrap">
+          <table class="cmp-table" id="cmp-table"></table>
+        </div>
+
+        <!-- Chart -->
+        <div class="cmp-section-label" style="margin-top:20px">Visual Comparison</div>
+        <div class="cmp-chart-wrap">
+          <canvas id="compareChart"></canvas>
+        </div>
+
+      </div>
+    </div>
   </div>
 </div>
 
@@ -659,6 +762,7 @@ function renderTable(){
   document.getElementById('result-count').innerHTML=`<strong>${total.toLocaleString()}</strong> rows <span style="color:var(--muted)">of ${allRows.length.toLocaleString()} total</span>`;
   document.getElementById('export-btn').style.display=total?'':'none';
   document.getElementById('chart-btn').style.display=total?'':'none';
+  document.getElementById('compare-btn').style.display=total?'':'none';
 
   if(!total){
     wrapper.innerHTML=`<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-text">No rows match current filters</div></div>`;
@@ -880,6 +984,238 @@ function importFilters(event){
   };
   reader.readAsText(file);
 }
+
+
+// ── COMPARE FEATURE ──────────────────────────────────────────────────
+let cmpChartInst = null;
+let activeCmpTab = 'pick';
+
+function openCompare(){
+  if(!allRows.length){toast('Load a file first');return}
+  if(!prefilters.length){toast('No saved pre-filters to compare');return}
+
+  // Populate sum column picker
+  const sel = document.getElementById('cmp-sum-col');
+  const prev = sel.value;
+  sel.innerHTML = '<option value="">— select column —</option>';
+  columns.forEach(col => {
+    const opt = document.createElement('option');
+    opt.value = col; opt.textContent = col;
+    sel.appendChild(opt);
+  });
+  // Default to whatever is selected in main sum picker
+  const mainSum = document.getElementById('sum-col-select').value;
+  if(mainSum) sel.value = mainSum;
+  else if(prev && columns.includes(prev)) sel.value = prev;
+
+  // Populate checklist
+  buildCmpChecklist();
+
+  document.getElementById('compare-results').style.display = 'none';
+  document.getElementById('compare-modal').classList.add('open');
+}
+
+function closeCompare(){
+  document.getElementById('compare-modal').classList.remove('open');
+}
+
+function switchCmpTab(tab, btn){
+  activeCmpTab = tab;
+  document.querySelectorAll('.cmp-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('cmp-tab-pick').style.display = tab === 'pick' ? '' : 'none';
+  document.getElementById('cmp-tab-tag').style.display  = tab === 'tag'  ? '' : 'none';
+}
+
+function buildCmpChecklist(){
+  const list = document.getElementById('cmp-checklist');
+  list.innerHTML = '';
+  prefilters.forEach((pf, i) => {
+    const label = document.createElement('label');
+    label.className = 'cmp-check';
+    const cb = document.createElement('input');
+    cb.type = 'checkbox'; cb.value = i; cb.checked = true;
+    const span = document.createElement('span');
+    span.textContent = pf.name; span.title = pf.name;
+    label.appendChild(cb); label.appendChild(span);
+    list.appendChild(label);
+  });
+}
+
+function getFiltersToCompare(){
+  if(activeCmpTab === 'pick'){
+    const checked = [...document.querySelectorAll('#cmp-checklist input:checked')].map(cb => parseInt(cb.value));
+    return checked.map(i => prefilters[i]).filter(Boolean);
+  } else {
+    const tag = document.getElementById('cmp-tag-input').value.trim().toLowerCase();
+    if(!tag){ toast('Enter a tag/keyword to match'); return null; }
+    const matched = prefilters.filter(pf => pf.name.toLowerCase().includes(tag));
+    if(!matched.length){ toast(`No filters found containing "${tag}"`); return null; }
+    return matched;
+  }
+}
+
+function runCompare(){
+  const sumCol = document.getElementById('cmp-sum-col').value;
+  if(!sumCol){ toast('Pick a sum column first'); return; }
+
+  const filters = getFiltersToCompare();
+  if(!filters || !filters.length){ toast('Select at least one filter'); return; }
+
+  // Run each filter against allRows silently
+  const results = filters.map(pf => {
+    const rows = applyPrefilterToRows(pf.filters);
+    const nums = rows.map(r => toNum(r[sumCol])).filter(v => !isNaN(v));
+    const sum = nums.reduce((a,b) => a+b, 0);
+    return { name: pf.name, rows: rows.length, numericRows: nums.length, sum };
+  });
+
+  // Sort descending by sum
+  results.sort((a,b) => b.sum - a.sum);
+
+  const grandTotal = results.reduce((a,b) => a + b.sum, 0);
+  const grandRows  = results.reduce((a,b) => a + b.rows, 0);
+
+  renderCompareTable(results, grandTotal, grandRows, sumCol);
+  renderCompareChart(results, grandTotal, sumCol);
+
+  document.getElementById('compare-results').style.display = '';
+}
+
+// Apply a saved pre-filter's rules to allRows without touching the UI
+function applyPrefilterToRows(filters){
+  return allRows.filter(row => {
+    return Object.entries(filters).every(([col, state]) => {
+      const activeRows = state.rows.filter(r => r.value.trim() !== '');
+      if(!activeRows.length) return true;
+      if(state.logic === 'OR')
+        return activeRows.some(r => matchCellVal(row[col], r.type, r.value));
+      else
+        return activeRows.every(r => matchCellVal(row[col], r.type, r.value));
+    });
+  });
+}
+
+function matchCellVal(cellVal, type, val){
+  const cell = String(cellVal ?? '').toLowerCase().trim();
+  const v = val.trim().toLowerCase();
+  if(!v) return true;
+  return type === 'select' ? cell === v : cell.includes(v);
+}
+
+function renderCompareTable(results, grandTotal, grandRows, sumCol){
+  const tbl = document.getElementById('cmp-table');
+  tbl.innerHTML = '';
+
+  // Header
+  const thead = tbl.createTHead();
+  const hr = thead.insertRow();
+  ['Pre-filter Name', 'Matched Rows', `Sum of ${sumCol}`, '% of Total', 'Share'].forEach((h,i) => {
+    const th = document.createElement('th');
+    th.textContent = h;
+    if(i >= 2) th.className = 'right';
+    hr.appendChild(th);
+  });
+
+  // Body
+  const tbody = tbl.createTBody();
+  results.forEach(r => {
+    const tr = tbody.insertRow();
+    const pct = grandTotal > 0 ? (r.sum / grandTotal * 100) : 0;
+
+    const cells = [
+      {val: r.name, cls: ''},
+      {val: r.rows.toLocaleString('en-IN'), cls: 'right'},
+      {val: `${fmtNum(r.sum)}  (${fmtFull(r.sum)})`, cls: 'right'},
+      {val: pct.toFixed(1) + '%', cls: 'right'},
+      {val: '', cls: 'right', bar: pct},
+    ];
+    cells.forEach(c => {
+      const td = tr.insertCell();
+      td.className = c.cls;
+      if(c.bar !== undefined){
+        td.innerHTML = `<div class="cmp-pct-bar-wrap"><div class="cmp-pct-bar" style="width:${c.bar}%"></div></div>`;
+      } else {
+        td.textContent = c.val;
+      }
+    });
+  });
+
+  // Grand total row
+  const tr = tbody.insertRow();
+  tr.className = 'grand-total';
+  [
+    {val: `GRAND TOTAL (${results.length} filters)`, cls: ''},
+    {val: grandRows.toLocaleString('en-IN'), cls: 'right'},
+    {val: `${fmtNum(grandTotal)}  (${fmtFull(grandTotal)})`, cls: 'right'},
+    {val: '100%', cls: 'right'},
+    {val: '', cls: 'right'},
+  ].forEach(c => {
+    const td = tr.insertCell();
+    td.className = c.cls;
+    td.textContent = c.val;
+  });
+}
+
+function renderCompareChart(results, grandTotal, sumCol){
+  const labels = results.map(r => r.name);
+  const data   = results.map(r => r.sum);
+  const colors = results.map((_,i) =>
+    `hsla(${60 + i * (200/Math.max(results.length,1))},85%,58%,0.85)`
+  );
+
+  const ctx = document.getElementById('compareChart').getContext('2d');
+  if(cmpChartInst) cmpChartInst.destroy();
+
+  cmpChartInst = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        label: `Sum of ${sumCol}`,
+        data,
+        backgroundColor: colors,
+        borderColor: colors.map(c => c.replace('0.85','1')),
+        borderWidth: 1,
+        borderRadius: 4,
+      }]
+    },
+    options:{
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins:{
+        legend:{ display: false },
+        tooltip:{
+          callbacks:{
+            label: ctx => `${fmtNum(ctx.parsed.y)}  (${fmtFull(ctx.parsed.y)})`,
+            afterLabel: ctx => {
+              const pct = grandTotal > 0 ? (ctx.parsed.y / grandTotal * 100).toFixed(1) : 0;
+              return `${pct}% of grand total`;
+            }
+          },
+          backgroundColor:'#1c1d20', borderColor:'#2a2b2e', borderWidth:1,
+          titleColor:'#e8ff47', bodyColor:'#e2e3e5',
+          titleFont:{family:'IBM Plex Mono'}, bodyFont:{family:'IBM Plex Sans'}
+        }
+      },
+      scales:{
+        x:{
+          ticks:{ color:'#6b6d73', font:{family:'IBM Plex Mono', size:10}, maxRotation:35 },
+          grid:{ color:'rgba(255,255,255,0.04)' }
+        },
+        y:{
+          ticks:{ color:'#6b6d73', font:{family:'IBM Plex Mono', size:10}, callback: v => fmtNum(v) },
+          grid:{ color:'rgba(255,255,255,0.06)' }
+        }
+      }
+    }
+  });
+}
+
+// Close compare modal on backdrop click
+document.getElementById('compare-modal').addEventListener('click', function(e){
+  if(e.target === this) closeCompare();
+});
 
 
 renderPrefilters();
